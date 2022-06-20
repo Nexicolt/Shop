@@ -1,0 +1,110 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Data.Model
+@model BooksModel
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+
+<div class="grid grid-cols-5 gap-8 py-8 px-32">
+    @foreach (var book in Model.Books)
+    {
+        <div class="flex flex-col gap-1 justify-center items-center w-fit px-2  py-3 border rounded-md drop-shadow-md	relative" style="max-width: 300px;">
+            <div class="flex justify-center">
+                <img src="~/@book.IconUrl" alt="" style="width: 150px" class="" />
+            </div>
+            <p class="font-bold text-center">@book.Name</p>
+            <div class="text-amber-400 flex gap-1 justify-center w-full">
+                <i class="icon-star-filled"></i>
+                <i class="icon-star-filled"></i>
+                <i class="icon-star-filled"></i>
+                <i class="icon-star"></i>
+                <i class="icon-star"></i>
+            </div>
+            <span class="flex gap-2 text-sm">
+                <p class="font-semibold">Autor:</p>
+                <p>@book.Author</p>
+            </span>
+            <span class="flex gap-2 text-sm">
+                <p class="font-semibold">Stron:</p>
+                <p>@book.Pages</p>
+            </span>
+            @if (@book.Discount > 0)
+            {
+                <span class="flex gap-2 text-sm">
+                    <p class="font-semibold">Cena:</p>
+                    <div>
+                        <p class="line-through">@book.Price</p>
+                        <p>@book.PriceAfterDiscount</p>
+                    </div>
+                </span>
+            }
+            else
+            {
+                <span class="flex gap-2 text-sm">
+                    <p class="font-semibold">Cena:</p>
+                    <p>@book.Price</p>
+                </span>
+            }
+
+            <span class="px-4 text-center text-neutral-600 text-sm italic">
+
+                @book.Description.Substring(0, @book.Description.Length > 100 ? 100 : @book.Description.Length)
+
+            </span>
+
+            @if (SignInManager.IsSignedIn(User))
+            {
+                <div class="w-full flex justify-center items-center mt-2">
+                    <button onclick="AddItemToCart(@book.Id)">
+                        <span class="rounded-full bg-green-700 text-white p-2 text-xl w-fit">
+                            <i class="icon-basket"></i>
+                        </span>
+                    </button>
+                </div>
+            }
+            @if (!book.Available)
+            {
+                <div class="not-available w-full h-full bg-neutral-100 bg-opacity-90 t-0 l-0 absolute">
+                    <div class="w-full h-full flex flex-col items-center justify-center">
+                        <span class="text-red-600 font-bold uppercase text-xl">NIEDOSTĘPNA</span>
+                    </div>
+                </div>
+            }
+            else
+            {
+                if (@book.Discount > 0)
+                {
+                    <span class="absolute rounded-full w-16 h-16 font-bold text-xl text-white bg-amber-600 flex items-center justify-center" style="top: -15px; right: -15px;">
+                        -@book.Discount%
+                    </span>
+                }
+            }
+
+        </div>
+    }
+</div>
+
+@section Scripts{
+    <script>
+        let baseUlr = '@Url.Content("~")';
+        function AddItemToCart(bookId) {
+            $.ajax({
+                url: baseUlr + "/Shop/AddItemToCart",
+                method: "post",
+                dataType: "json",
+                data: {
+                    bookId: parseInt(bookId)
+                },
+                success: function(result) {
+                    let cartCounter = $("#cart-counter");
+                    let currentValue = parseInt($(cartCounter).text());
+                    if (result.item_added) {
+                        ToastSuccess("Dodano przedmiot do koszyka");
+                        $(cartCounter).text((currentValue + 1));
+                    } else {
+                        ToastSuccess("Zwiększono ilość w koszyku");
+                    }
+                }
+            });
+        }
+    </script>
+}

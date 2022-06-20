@@ -1,0 +1,84 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Data.Model
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+
+<!DOCTYPE html>
+<html lang="en" style="overflow-x: hidden">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="~/Intranet.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/fontello.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/reset.css" asp-append-version="true" />
+    @await RenderSectionAsync("CSS", required: false)
+    <style>
+        a:hover {
+            color: white;
+        }
+
+        .alert {
+            margin-bottom: 0 !important;
+            position: absolute;
+            width: 100vw;
+        }
+    </style>
+</head>
+<body class="">
+    <div flashes></div>
+
+
+    <div class="flex" style="min-height: 100vh">
+
+
+        @if (!SignInManager.IsSignedIn(User))
+        {
+            @await Html.PartialAsync("_LeftMenuPartial")
+        }
+        <div class="w-full">
+            <header>
+                @if (!SignInManager.IsSignedIn(User))
+                {
+                    <nav class="flex justify-end">
+                        <ul class="flex flex-col justify-center items-center pr-8 py-3">
+                            <li>
+                                <i class="icon-user"></i>
+                                @UserManager.GetUserName(User)
+                            </li>
+                            <li>
+                                <a href="" class="text-white">
+                                    <button class="bg-amber-500 py-1 px-3 font-bold uppercase">Wyloguj</button>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                }
+            </header>
+            <div class=" px-8">
+                @RenderBody()
+            </div>
+        </div>
+
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+    <script>
+        //Ukrycie Flash Message
+        $(".alert button").click(function() {
+            $(this).parent().parent().remove();
+        })
+
+    </script>
+</body>
+</html>

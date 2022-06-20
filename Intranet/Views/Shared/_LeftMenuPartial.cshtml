@@ -1,0 +1,33 @@
+﻿@{
+
+}
+
+<div class="flex flex-col gap-4 items-center bg-gradient-to-r from-blue-500 to-blue-700 text-neutral-200">
+    <h1 class="uppercase mb-8 mt-8 uppercase font-bold">Panel zarządzania</h1>
+
+    <ul class="text-md">
+        <a asp-controller="Pages" asp-action="Index">
+        <li class="flex gap-2 items-center py-2 px-12  hover:bg-blue-400/60 hover:cursor-pointer">
+            <i class="icon-sites text-3xl"></i>
+            <p>Strony</p>
+        </li>
+        </a>
+        <a asp-controller="Categories" asp-action="Index">
+            <li class="flex gap-2 items-center py-2 px-12  hover:bg-blue-400/60 hover:cursor-pointer">
+                <i class="icon-categories text-3xl"></i>
+                <p>Kategorie</p>
+            </li>
+        </a>
+        <a asp-controller="Books" asp-action="Index">
+        <li class="flex gap-2 items-center py-2 px-12  hover:bg-blue-400/60 hover:cursor-pointer">
+            <i class="icon-books text-3xl"></i>
+            <p>Książki</p>
+        </li>
+        </a>
+        <li class="flex gap-2 items-center py-2 px-12  hover:bg-blue-400/60 hover:cursor-pointer">
+            <i class="icon-users text-3xl"></i>
+            <p>Użytkownicy</p>
+        </li>
+    </ul>
+
+</div>

@@ -1,0 +1,106 @@
+﻿@model Intranet.Models.Books.BookEditModel
+
+@section CSS
+    {
+    <style>
+        .tox {
+            width: 100%;
+            height: 600px !important;
+        }
+        .select2-selection {
+            padding: 20px 0;
+        }
+        .select2 {
+            width: 100% !important;
+        }
+        .select2-selection__rendered
+         {
+             height: 33px;
+             margin-top: -13px;
+        }
+    </style>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+}
+
+    <form method="post" enctype="multipart/form-data" class="py-4">
+        <div class="flex flex-col gap-4 items-start justify-start w-full">
+            <div class="w-full flex gap-2 items-center">
+                <p class="font-semibold uppercase w-32">Tytuł:</p>
+                <input asp-for="Name" type="text" class="px-4 py-2 border w-full rounded-md" />
+            </div>
+            <span asp-validation-for="Name" class="text-red-500 -mt-3"></span>
+
+            <div class="w-full flex gap-2 items-center">
+                <p class="font-semibold uppercase w-32">Autor:</p>
+                <input asp-for="Author" type="text" class="px-4 py-2 border w-full rounded-md" />
+            </div>
+            <span asp-validation-for="Author" class="text-red-500 -mt-3"></span>
+
+            <div class="w-full flex gap-2 items-center">
+                <p class="font-semibold uppercase w-32">Cena:</p>
+                <input asp-for="Price" class="px-4 py-2 border w-full rounded-md" />
+            </div>
+            <span asp-validation-for="Price" class="text-red-500 -mt-3"></span>
+
+            <div class="w-full flex gap-2 items-center">
+                <p class="font-semibold uppercase w-32">Ilość stron:</p>
+                <input asp-for="Pages" class="px-4 py-2 border w-full rounded-md" />
+            </div>
+            <span asp-validation-for="Pages" class="text-red-500 -mt-3"></span>
+
+            <div class="w-full flex gap-2 items-center">
+                <p class="font-semibold uppercase w-32">Opis:</p>
+                <textarea asp-for="Description" class="px-4 py-2 border w-full rounded-md"></textarea>
+            </div>
+            <span asp-validation-for="Description" class="text-red-500 -mt-3"></span>
+
+            <div class="w-full flex gap-2 items-center">
+                <p class="font-semibold uppercase w-32">Kategoria:</p>
+                @Html.DropDownListFor(m => m.CategoryId, Model.CateogoriesList, "", new{ @class="px-4 py-2 border w-full rounded-md"})
+            </div>
+            <span asp-validation-for="CategoryId" class="text-red-500 -mt-3"></span>
+
+
+            <div class="w-full flex gap-2 items-center">
+                <p class="font-semibold uppercase w-32">Okładka:</p>
+                <input asp-for="Icon" type="file" class="px-4 py-2 border w-full rounded-md" accept="image/x-png,image/gif,image/jpeg">
+            </div>
+            <span asp-validation-for="Icon" class="text-red-500 -mt-3"></span>
+            
+            <div class="w-full flex gap-2 items-center">
+                <p class="font-semibold uppercase w-32">Zniżka (%):</p>
+                <input asp-for="Discount" class="px-4 py-2 border w-full rounded-md"/>
+            </div>
+            <span asp-validation-for="Discount" class="text-red-500 -mt-3"></span>
+            
+            
+            <div class="w-full flex gap-2 items-center">
+                <p class="font-semibold uppercase w-32">Czy dostępna:</p>
+                <input asp-for="Available" class="px-4 py-2 border  rounded-md"/>
+            </div>
+
+            <div class="flex gap-8">
+                <input type="submit" value="Dodaj" class="py-2 px-4 border-2 border-green-600 hover:bg-green-600 hover:text-white uppercase font-semibold" />
+                <a asp-action="Index">
+                    <input type="button" class="py-2 px-4 border-2 border-red-500 hover:bg-red-500 hover:text-white uppercase font-semibold" value="Anuluj" />
+                </a>
+            </div>
+            
+            
+
+
+        </div>
+    </form>
+
+    @section Scripts
+    {
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+        <script>
+            $(document).ready(function() {
+                $('#CategoryId').select2({
+                    dropdownCssClass: "px-4 py-2 border w-full rounded-md"
+                });
+            });
+        </script>
+    }

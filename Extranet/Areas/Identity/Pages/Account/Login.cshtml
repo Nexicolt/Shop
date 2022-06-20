@@ -1,0 +1,42 @@
+﻿@page
+@model LoginModel
+@{
+    Layout = null;
+}
+
+
+<html>
+<head>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+<div style="width: 100vw; height: 100vh" class="flex justify-center items-center">
+    <div class="w-fit">
+        <form id="account" method="post" class="flex flex-col gap-8 items-center">
+
+            <div asp-validation-summary="ModelOnly" class="text-danger text-red-600 font-bold"></div>
+            <div class="form-floating">
+                <input asp-for="Input.UserName"  autocomplete="username" aria-required="true" placeholder="Login"
+                       class="border rounded-sm px-3 py-2"/>
+            </div>
+            <div class="form-floating">
+                <input asp-for="Input.Password"  autocomplete="current-password" aria-required="true" placeholder="Hasło"
+                       class="border rounded-sm px-3 py-2"/>
+            </div>
+            <div>
+                <div class="">
+                    <label asp-for="Input.RememberMe" class="form-label">
+                        <input class="form-check-input" asp-for="Input.RememberMe"/>
+                        Zapamiętaj mnie
+                    </label>
+                </div>
+            </div>
+            <div>
+                <button id="login-submit" type="submit" class="border-2 border-amber-500 rounded-md  uppercase py-2 px-4
+                    hover:cursor-pointer hover:bg-amber-500 hover:text-neutral-50 ">Zaloguj</button>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

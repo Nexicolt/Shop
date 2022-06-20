@@ -1,0 +1,173 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Data.Model
+@model BaseModel
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/responsive.css" asp-append-version="true" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/fontello.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/font-awesome.min.css" asp-append-version="true" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="~/Extranet.styles.css" asp-append-version="true" />
+    @await RenderSectionAsync("CSS", required: false)
+</head>
+
+<body>
+    <div flashes></div>
+
+    <div class="hero_area">
+        <header class="header_section">
+            <div class="container-fluid">
+                <nav class="navbar navbar-expand-lg custom_nav-container ">
+                    <a class="navbar-brand" href="index.html">
+                        <span>
+                            Bostorek
+                        </span>
+                    </a>
+
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class=""> </span>
+                    </button>
+
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav flex gap-4 items-center">
+                            @foreach (var page in Model.Pages)
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link pl-lg-0" asp-action="Index" asp-controller="Home" asp-route-siteId="@Html.Raw(@page.Key)">@Html.Raw(@page.Value)</a>
+                                </li>
+                            }
+                            <li class="nav-item">
+                                <a class="nav-link pl-lg-0" asp-action="Index" asp-controller="Shop" asp-route-siteId="">Sklep</a>
+                            </li>
+
+                            @if (SignInManager.IsSignedIn(User))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link pl-lg-0" asp-action="Cart" asp-controller="Shop" asp-route-siteId="">
+                                        <div class="flex flex-col relative">
+                                            <i class="icon-basket text-2xl"></i>
+                                            <p id="cart-counter" class="absolute block w-6 h-6 bg-amber-500 rounded-full" style="bottom: -15px; right: -10px">@Model.CartItemsCount</p>
+                                        </div>
+                                    </a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link pl-lg-0" href="/Identity/Account/Login">
+                                        <button class="bg-amber-500 py-2 px-3 uppercase text-sm font-bold">Zaloguj</button>
+                                    </a>
+                                </li>
+                            }
+
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </header>
+    </div>
+    <div>
+        @RenderBody()
+    </div>
+
+    <section class="info_section layout_padding2">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-lg-3 info-col">
+                    <div class="info_detail">
+                        <h4>
+                            O nas
+                        </h4>
+                        <p>
+                            Dołącz do Klientów naszej księgarni i razem z nami promuj czytelnictwo!
+                        </p>
+                        <div class="info_social">
+                            <a href="">
+                                <i class="fa fa-facebook" aria-hidden="true"></i>
+                            </a>
+                            <a href="">
+                                <i class="fa fa-twitter" aria-hidden="true"></i>
+                            </a>
+                            <a href="">
+                                <i class="fa fa-linkedin" aria-hidden="true"></i>
+                            </a>
+                            <a href="">
+                                <i class="fa fa-instagram" aria-hidden="true"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3 info-col">
+                    <div class="info_contact">
+                        <h4>
+                            Adres
+                        </h4>
+                        <div class="contact_link_box">
+                            <a href="">
+                                <i class="fa fa-map-marker" aria-hidden="true"></i>
+                                <span>
+                                    Lokalizacja
+                                </span>
+                            </a>
+                            <a href="">
+                                <i class="fa fa-phone" aria-hidden="true"></i>
+                                <span>
+                                    Tel: +01 1234567890
+                                </span>
+                            </a>
+                            <a href="">
+                                <i class="fa fa-envelope" aria-hidden="true"></i>
+                                <span>
+                                    demo@gmail.com
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3 info-col">
+                    <div class="info_contact">
+                        <h4>
+                            Newsletter
+                        </h4>
+                        <form action="#">
+                            <input type="text" placeholder="Enter email" />
+                            <button type="submit">
+                                Subskrybuj
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <footer class="">
+        <div class="w-full text-center flex flex-col gap-8 pb-8">
+            <hr style="width: 70%" class="mx-auto">
+            <span>&copy; 2022 - Nexicolt. All rights reserved</span>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        //Ukrycie Flash Message
+        $(".alert button").click(function() {
+            $(this).parent().parent().remove();
+        })
+
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

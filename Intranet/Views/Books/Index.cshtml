@@ -1,0 +1,103 @@
+﻿@{
+    ViewData["Title"] = "Kategorie";
+}
+
+@section CSS
+{
+    <style>
+        .table-header {
+            border-right: 1px solid black;
+            border-bottom: 1px solid black;
+            text-align: center;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .table-header:last-child {
+            border-right: none;
+        }
+        .table-record {
+            border-right: 1px solid black;
+            text-align: center;
+            padding: 10px 0;
+        }
+        .table-row:nth-child(2n) {
+            background: #dddddd;
+        }
+        .table-record:last-child {
+            border-right: none;
+        }
+        input[type=checkbox]
+        {
+            -ms-transform: scale(1.5); /* IE */
+            -moz-transform: scale(1.5); /* FF */
+            -webkit-transform: scale(1.5); /* Safari and Chrome */
+            -o-transform: scale(1.5); /* Opera */
+            transform: scale(1.5);
+            padding: 5px;
+        }
+
+    </style>
+}
+
+@model Extranet.Models.BooksModel
+
+<div class="">
+    <section class="block">
+        <h1 class="text-3xl font-medium block mb-4">Strony</h1>
+        <div class="buttons flex gap-4">
+            <a asp-action="New">
+                <button class="py-2 px-3 border-2 border-green-700 hover:bg-green-700 hover:text-white">Nowa książka</button>
+            </a>
+            
+            <button class="py-2 px-3 border-2 border-red-700 hover:bg-red-700 hover:text-white" onclick="DeleteSelectedRows('table')">Usuń wybrane</button>
+         
+        </div>
+    </section>
+    <!--<hr style="width: 80%" class="mx-auto mt-4" />-->
+
+    <div class="mt-12" id="table">
+        <div class="grid grid-cols-11 items-end">
+            <div class="table-header"></div>
+            <div class="table-header">Nazwa</div>
+            <div class="table-header">Autor</div>
+            <div class="table-header">Kategoria</div>
+            <div class="table-header">Cena</div>
+            <div class="table-header">Ilośc stron</div>
+            <div class="table-header">Zniżka</div>
+            <div class="table-header">Czy dostępna</div>
+            <div class="table-header">Data dodania</div>
+            <div class="table-header">Data modyfikacji</div>
+            <div class="table-header">Akcje</div>
+        </div>
+        @foreach (var book in Model.Books)
+        {
+            <div class="grid grid-cols-11 table-row">
+                <div class="table-record">
+                    <input type="checkbox" value="@Html.Raw(book.Id)" />
+                </div>
+                <div class="table-record">@Html.Raw(book.Name)</div>
+                <div class="table-record">@Html.Raw(book.Author)</div>
+                <div class="table-record">@Html.Raw(book.Category.Name)</div>
+                <div class="table-record">@Html.Raw(book.Price)</div>
+                <div class="table-record">@Html.Raw(book.Pages)</div>
+                <div class="table-record">@Html.Raw(book.Discount)</div>
+                <div class="table-record">@Html.Raw(book.Available ? "Tak" : "Nie")</div>
+                <div class="table-record">@Html.Raw(book.CreateDate)</div>
+                <div class="table-record">@Html.Raw(book.EditDate != null ? book.EditDate.ToString() : "-")</div>
+                <div class="table-record text-white text-sm flex items-center gap-2 justify-center">
+                    <a asp-action="Remove" asp-route-Id="@Html.Raw(book.Id)">
+                        <i class="icon-trash p-2 bg-red-700 rounded-full"></i>
+                    </a> 
+                    <a asp-action="Edit" asp-route-Id="@Html.Raw(book.Id)">
+                        <i class="icon-pencil p-2 bg-sky-700 rounded-full"></i>
+                    </a> 
+                </div>
+            </div>
+        }
+    </div>
+
+</div>
+
+@section Scripts
+{
+}

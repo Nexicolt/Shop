@@ -1,0 +1,118 @@
+﻿@model CartModel
+
+<div style="width: 600px" class="mx-auto py-8">
+    <h1 class="text-amber-600 font-bold text-3xl mb-4">Zawartość koszyka</h1>
+
+    @foreach (var cartItem in Model.CartItems)
+    {
+        var totalprice = @cartItem.Price * @cartItem.Quantity;
+
+        <div class="flex justify-around items-center" id="@String.Concat("container", cartItem.Id)">
+            <div class="flex gap-3 items-center">
+                <img src="~/@cartItem.Book.IconUrl" alt="" style="width:90px" />
+                <div>
+                    <p class="font-bold">@cartItem.Book.Name</p>
+                    <div class="flex gap-1">
+                        Cena:
+                        <p class="font-bold price">@cartItem.Price</p>
+                    </div>
+
+                    <button class="text-red-600 font-semibold" onclick="DeleteItemFromCart(@cartItem.Book.Id, @cartItem.Id)">
+                        Usuń z koszyka
+                    </button>
+
+
+                </div>
+            </div>
+            <div>
+                <div class="flex gap-2 justify-start items-center">
+                    <button onclick="IncreaseQuantity(@cartItem.Book.Id, @cartItem.Id)">
+                        <i class="icon-plus p-2 text-white bg-amber-600"></i>
+                    </button>
+                    <span id="@cartItem.Id">
+                        @cartItem.Quantity
+                    </span>
+                    <button onclick="DecreaseQuantity(@cartItem.Book.Id, @cartItem.Id)">
+                        <i class="icon-minus p-2 text-white bg-amber-600"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="flex gap-1 items-center">
+                Razem:
+                <p class="font-bold text-xl"> <span class="total">@totalprice</span> zł</p>
+            </div>
+        </div>
+        <hr class="my-3" />
+    }
+</div>
+
+@section Scripts
+    {
+    <script>
+        let baseUlr = '@Url.Content("~")';
+        function IncreaseQuantity(bookId, object) {
+            $.ajax({
+                url: baseUlr + "/Shop/AddItemToCart",
+                method: "post",
+                dataType: "json",
+                data: {
+                    bookId: parseInt(bookId)
+                },
+                success: function(result) {
+                    let cartCounter = $("#" + object);
+                    let currentValue = parseInt($(cartCounter).text());
+                    $(cartCounter).text((currentValue + 1));
+                    let container = $("#container" + object);
+                    let singlePirce = $(container).find('.price').text().replace(',', '.');
+                    let value = (parseFloat(singlePirce) * (currentValue + 1)).toFixed(2);
+                    $(container).find('.total').text(value);
+                }
+            });
+        }
+        function DecreaseQuantity(bookId, object) {
+            $.ajax({
+                url: baseUlr + "/Shop/DecreaseQuantity",
+                method: "post",
+                dataType: "json",
+                data: {
+                    bookId: parseInt(bookId)
+                },
+                success: function(result) {
+                    let res = JSON.parse(JSON.stringify(result));
+                    let cartCounter = $("#" + object);
+                    let currentValue = parseInt($(cartCounter).text());
+                    if (res.succesfull) {
+                        $(cartCounter).text((currentValue - 1));
+                        let container = $("#container" + object);
+                        let singlePirce = $(container).find('.price').text().replace(',', '.');
+                        let value = (parseFloat(singlePirce) * (currentValue - 1)).toFixed(2);
+                        $(container).find('.total').text(value);
+                    } else {
+                        ToastError(result.error);
+                    }
+                }
+            });
+        }
+
+
+        function DeleteItemFromCart(bookId, object) {
+            $.ajax({
+                url: baseUlr + "/Shop/RemoveItemFromCart",
+                method: "post",
+                dataType: "text",
+                data: {
+                    bookId: parseInt(bookId)
+                },
+                success: function(result) {
+                    let container = $("#container" + object);
+                    container.remove();
+                    let cartCounter = $("#cart-counter");
+                    let currentValue = parseInt($(cartCounter).text());
+                    $(cartCounter).text((currentValue - 1));
+                    ToastSuccess("USunięto pomyślnie");
+
+                }
+            });
+        }
+    </script>
+}

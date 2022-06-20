@@ -1,0 +1,68 @@
+﻿@model CategoryModel
+@{
+    ViewData["Title"] = "Sklep";
+}
+@section CSS
+    {
+    <style>
+        .category-box {
+            width: 300px;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+            .category-box img {
+                width: 60px;
+                margin: auto;
+                transition: width .2s linear;
+            }
+
+            .category-box:hover {
+                cursor: pointer;
+            }
+
+                .category-box:hover img {
+                    width: 70px;
+                }
+
+    </style>
+}
+
+    <div class="grid grid-cols-3 gap-12 w-fit mx-auto my-4">
+
+        @foreach (var category in @Model.Categories)
+    {
+        <a asp-action="BooksByCategory" asp-route-categoryId="@category.Id">
+            <div class="category-box  bg-neutral-100">
+                <div class=" ">
+                    <div class="">
+                        <img src="@Html.Raw(@category.IconUrl)" alt="">
+                    </div>
+                    <div class="pt-6">
+                        <h5 class="font-bold">
+                            @Html.Raw(@category.Name)
+                        </h5>
+                    </div>
+                </div>
+            </div>
+        </a>
+    }
+    <a>
+        <div class="category-box  bg-neutral-100">
+            <div class=" ">
+                <div class="">
+                    <img src="~/images/all_icon.png" alt="">
+                </div>
+                <div class="pt-6">
+                    <h5 class="font-bold">
+                        Wszystkie
+                    </h5>
+                </div>
+            </div>
+        </div>
+    </a>
+
+</div>

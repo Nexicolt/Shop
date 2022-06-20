@@ -1,0 +1,42 @@
+﻿@model Intranet.Models.Categories.CategoryEditModel
+
+@section CSS
+    {
+    <style>
+        .tox {
+            width: 100%;
+            height: 600px !important;
+        }
+    </style>
+}
+
+<form method="post" enctype="multipart/form-data">
+    <div class="flex flex-col gap-4 items-start justify-start w-full">
+        <div class="w-full flex gap-2 items-center">
+            <p class="font-semibold uppercase">Tytuł:</p>
+            <input type="text" value="@Model.Name" name="name" class="px-4 py-2 border w-full rounded-md" />
+        </div>
+        <span asp-validation-for="Name" class="text-red-500 -mt-3"></span>
+         
+        <div class="w-full flex gap-2 items-center">
+            <p class="font-semibold uppercase">Ikona:</p>
+            <input asp-for="@Model.Icon" type="file" class="px-4 py-2 border w-full rounded-md" accept="image/x-png,image/gif,image/jpeg">
+        </div>
+        <span asp-validation-for="Icon" class="text-red-500 -mt-3"></span>
+        
+        <input asp-for="@Model.Id" type="hidden" >
+
+
+        <div class="flex gap-8">
+            <input type="submit" value="Zatwierdź" class="py-2 px-4 border-2 border-green-600 hover:bg-green-600 hover:text-white uppercase font-semibold" />
+            <a asp-action="Index">
+                <input type="button" class="py-2 px-4 border-2 border-red-500 hover:bg-red-500 hover:text-white uppercase font-semibold" value="Anuluj" />
+            </a>
+        </div>
+    </div>
+</form>
+
+    @section Scripts
+    {
+
+}
