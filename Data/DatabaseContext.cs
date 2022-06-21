@@ -30,6 +30,8 @@ namespace Data
         public DbSet<Book> Book { get; set; }
         public DbSet<CartItem> CartItem { get; set; }
         public DbSet<Cart> Cart { get; set; }
+        public DbSet<BoughtBooks> BoughtBooks { get; set; }
+        public DbSet<Opinion> Opinion { get; set; }
 
         /// <summary>
         /// Zwraca wszystkie rekordy przekazanego typu, które są aktywne
@@ -44,7 +46,12 @@ namespace Data
                 .HasOne<Category>(row => row.Category)
                 .WithMany(row => row.Books)
                 .OnDelete(DeleteBehavior.Restrict);
-            
+
+            builder.Entity<Book>()
+                .HasMany(row => row.Opinions)
+                .WithOne(row => row.OpiniedBook)
+                .OnDelete(DeleteBehavior.Restrict);
+
         }
 
         /// <summary>

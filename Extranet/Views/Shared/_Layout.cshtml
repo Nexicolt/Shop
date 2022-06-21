@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="~/css/fontello.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/font-awesome.min.css" asp-append-version="true" />
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/rxjs@7.5.5/dist/bundles/rxjs.umd.min.js"></script>
     <link rel="stylesheet" href="~/Extranet.styles.css" asp-append-version="true" />
     @await RenderSectionAsync("CSS", required: false)
 </head>
@@ -57,6 +58,15 @@
                                         <div class="flex flex-col relative">
                                             <i class="icon-basket text-2xl"></i>
                                             <p id="cart-counter" class="absolute block w-6 h-6 bg-amber-500 rounded-full" style="bottom: -15px; right: -10px">@Model.CartItemsCount</p>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link pl-lg-0" asp-action="Distinct_AllBoughtBooksView" asp-controller="Shop" asp-route-siteId="">
+                                        <div class="text-center">
+                                            Moje
+                                            <br />
+                                            zakupy
                                         </div>
                                     </a>
                                 </li>

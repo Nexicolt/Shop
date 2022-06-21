@@ -13,11 +13,19 @@
             </div>
             <p class="font-bold text-center">@book.Name</p>
             <div class="text-amber-400 flex gap-1 justify-center w-full">
-                <i class="icon-star-filled"></i>
-                <i class="icon-star-filled"></i>
-                <i class="icon-star-filled"></i>
-                <i class="icon-star"></i>
-                <i class="icon-star"></i>
+                <button onclick="FetchOpinionsByBook(@book.Id)">
+
+                    @for (int x = 0; x < book.Stars; x++)
+                    {
+                        <i class="icon-star-filled"></i>
+                    }
+                    @for (int x = book.Stars; x < 5; x++)
+                    {
+                        <i class="icon-star"></i>
+                    }
+                    <p class="text-neutral-800">(@book.OpinionsCount)</p>
+
+                </button>
             </div>
             <span class="flex gap-2 text-sm">
                 <p class="font-semibold">Autor:</p>
@@ -83,7 +91,78 @@
     }
 </div>
 
+<div id="opinions" class="absolute hidden w-full h-full bg-neutral-800 bg-opacity-90 top-0 left-0">
+    @await Html.PartialAsync("OpinionsPartial")
+</div>
+
 @section Scripts{
+    <script>
+        var opinionsObservable = new rxjs.Subject();
+
+        let isShown = false;
+        function ToggleOpinions() {
+            if (!isShown) {
+                $("#opinions").show();
+                $("#OpinionsContainer").animate({ width: 'toggle' }, 500);
+            } else {
+
+                $("#OpinionsContainer").animate({ width: 'toggle' }, 500, function() {
+                    $("#opinions").hide();
+
+                });
+            }
+            isShown = !isShown;
+        }
+
+        //Pobieranie opini z API
+        function FetchOpinionsByBook(bookId) {
+
+            ToggleOpinions();
+            $.ajax({
+                url: baseUlr + "/Shop/OpinionsForBook",
+                method: "post",
+                dataType: "json",
+                data: {
+                    bookId: parseInt(bookId)
+                },
+                success: function(result) {
+                    let opinionsArray = JSON.parse(JSON.stringify(result));
+                    opinionsObservable.next(opinionsArray);
+                }
+            });
+        }
+
+        opinionsObservable.subscribe(
+            function(x) {
+                $("#opinionsList").html("");
+                $.each(x, (index, value) => {
+                    let actualHTML = $("#opinionsList").html();
+                    actualHTML +=
+                        `<div class="opinion py-3 px-8">
+                                                            <p><b>Użytkownik</b>:${value.user}</p>`;
+                    actualHTML += GenerateStars(value.stars);
+                    actualHTML += `<p><b>Dodano:</b> ${value.createDate}</p>
+                                                            <textarea disabled class="w-full h-32 border-2 border-cyan-600 p-3">${value.description}</textarea>
+                                                        </div>
+                                                    `;
+                    $("#opinionsList").html(actualHTML);
+                });
+            },
+            function(e) { }, //error
+            function() { }); //completed
+
+        function GenerateStars(positiveStars) {
+            let starsHtml = "<div class='flex gap-2'>";
+            for (x = 0; x < positiveStars; x++) {
+                starsHtml += `<p><i class="icon-star-filled" > </i></p>`;
+            }
+            for (x = positiveStars; x < 5; x++) {
+                starsHtml += `<p><i class="icon-star" > </i></p>`;
+            }
+            starsHtml += "</div>"
+            return starsHtml;
+        }
+    </script>
     <script>
         let baseUlr = '@Url.Content("~")';
         function AddItemToCart(bookId) {

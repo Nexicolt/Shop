@@ -186,6 +186,30 @@ namespace Intranet.Controllers
                 Message = message ?? "Kategoria została usunięta poprawnie" //Message != null, gdy zawiera komunikat błędu
             });
         }
+
+        [Route("/Comments/{bookId}")]
+        public async Task<IActionResult> Comments(CancellationToken cancelationToken, long bookId)
+        {
+            var model = new CommentsModel
+            {
+                Opinions = await _dbContext.AllActive<Opinion>()
+                .Include(row => row.CreateBy)
+                .Include(row => row.OpiniedBook)
+                .Where(row => row.OpiniedBook.Id == bookId).ToListAsync(cancelationToken)
+            };
+
+            return View("Comments", model);
+        }
+
+
+        public async Task<IActionResult> RemoveOpinion(CancellationToken cancelationToken, long Id, long bookId)
+        {
+            var opinion = await _dbContext.Opinion.FirstOrDefaultAsync(row => row.Id == Id, cancelationToken);
+            opinion?.Delete();
+            await _dbContext.SaveChangesAsync(cancelationToken);
+            _flasher.Success("Opinia została usunięta", true);
+            return RedirectToAction("Comments",new { bookId=bookId });
+        }
     }
 }
 

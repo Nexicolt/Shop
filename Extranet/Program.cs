@@ -11,7 +11,7 @@ builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfi
     .AddEntityFrameworkStores<DatabaseContext>(); ;
 
 // Add services to the container.
-builder.Services.AddFlashes();
+builder.Services.AddFlashes().AddMvc();
 
 builder.Services.AddControllersWithViews();
 

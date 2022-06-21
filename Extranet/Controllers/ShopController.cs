@@ -1,4 +1,5 @@
 ﻿
+using Core.Flash;
 using Data.Model;
 using Extranet.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -8,8 +9,10 @@ namespace Extranet.Controllers
 {
     public class ShopController : BaseController
     {
-        public ShopController(Data.DatabaseContext databaseContext) : base(databaseContext)
+        private readonly IFlasher _flasher;
+        public ShopController(Data.DatabaseContext databaseContext, IFlasher flasher) : base(databaseContext)
         {
+            _flasher = flasher;
         }
 
         public async Task<IActionResult> Index(CancellationToken cancelationToken)
@@ -33,7 +36,14 @@ namespace Extranet.Controllers
         [Route("/books/{categoryId}")]
         public async Task<IActionResult> BooksByCategory(CancellationToken cancelationToken, long? categoryId)
         {
-            var books = await _dbContext.AllActive<Book>().Where(row => row.Category.Id == categoryId).ToListAsync(cancelationToken);
+            var books = await _dbContext.AllActive<Book>().Include(row => row.Opinions).Where(row => row.Category.Id == categoryId).ToListAsync(cancelationToken);
+
+            foreach (var book in books)
+            {
+                var cos = await _dbContext.AllActive<Opinion>().Where(row => row.OpiniedBook.Id == book.Id).ToListAsync(cancelationToken);
+                book.Stars = cos.Count == 0 ? 0 : (int)cos.Average(row => row.Stars);
+                book.OpinionsCount = book.Opinions.Count;
+            }
 
             var model = new BooksModel
             {
@@ -56,7 +66,8 @@ namespace Extranet.Controllers
             }
             return _dbContext.AllActive<Cart>()
                 .Include(row => row.CartItems)
-                .ThenInclude(row=>row.Book)
+                .ThenInclude(row => row.Book)
+                .AsNoTracking()
                 .FirstOrDefault(row => row.Owner.Id == _loggedUser.Id);
 
         }
@@ -98,7 +109,8 @@ namespace Extranet.Controllers
 
             //Zwraca info, czy dodano nowy przedmiot, czy zwiększono ilość już istniejącego
             return Json(
-            new {
+            new
+            {
                 item_added = newItemAdded
             });
 
@@ -141,10 +153,101 @@ namespace Extranet.Controllers
             var usrCart = getUserCart();
             var item = usrCart.CartItems.FirstOrDefault(x => x.Book.Id == bookId);
             item?.Delete();
-            if(item != null)
+            if (item != null)
                 _dbContext.Remove(item);
             await _dbContext.SaveChangesAsync(cancelationToken);
             return "Ok";
+        }
+
+        public async Task<IActionResult> PayForCart(CancellationToken cancelationToken)
+        {
+            var userCart = getUserCart();
+            foreach (var cartItem in userCart.CartItems)
+            {
+                var savedBought = new BoughtBooks
+                {
+                    Book = await _dbContext.Book.FirstOrDefaultAsync(row => row.Id == cartItem.Book.Id, cancelationToken),
+                    Customer = _loggedUser
+                };
+
+                var cartItemTmp = await _dbContext.CartItem.FirstOrDefaultAsync(row => row.Id == cartItem.Id, cancelationToken);
+                _dbContext.Remove(cartItemTmp);
+                _dbContext.Add(savedBought);
+            }
+            var userCartTmp = await _dbContext.Cart.FirstOrDefaultAsync(row => row.Id == userCart.Id, cancelationToken);
+            _dbContext.Remove(userCartTmp);
+
+            try
+            {
+                await _dbContext.SaveChangesAsync(cancelationToken);
+                _flasher.Success("Zapłacono pomyslnie", true); ;
+            }
+            catch (Exception e)
+            {
+                _flasher.Danger("Nie udało się dokonać płatnoci", true);
+            }
+            return RedirectToAction("Index");
+        }
+
+        /// <summary>
+        /// Widok z wszystkimi kupionymi ksiązkami
+        /// </summary>
+        /// <param name="cancelationToken"></param>
+        /// <returns></returns>
+        [Route("/BoughtBooks")]
+        public async Task<IActionResult> Distinct_AllBoughtBooksView(CancellationToken cancelationToken)
+        {
+            var alreadyOpiniedBooksByUser = await _dbContext.AllActive<Opinion>().Where(row => row.CreateBy.Id == _loggedUser.Id).Select(row => row.OpiniedBook.Id).ToListAsync(cancelationToken);
+            //Każda zakupiona, kiedykolwiek przez użytkowika ksiązka, ale bez powieleń
+            var model = new BoughtBooksModel
+            {
+                Books = _dbContext.AllActive<BoughtBooks>()
+                    .Include(row => row.Book)
+                    .Include(row => row.Customer)
+                    .Where(row => row.Customer.Id == _loggedUser.Id)
+                    .Where(row => !alreadyOpiniedBooksByUser.Contains(row.Book.Id))
+                    .ToList()
+                    .DistinctBy(row => row.Book.Id)
+                    .ToList()
+            };
+            return BaseView("BoughtBooks", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddOpinion(CancellationToken cancelationToken, OpinionModel opinionMdeol)
+        {
+
+            var opinion = new Opinion
+            {
+                Stars = opinionMdeol.Stars,
+                Description = opinionMdeol.Description,
+                OpiniedBook = await _dbContext.Book.FirstOrDefaultAsync(row => row.Id == opinionMdeol.BookId, cancelationToken)
+            };
+
+            _dbContext.Add(opinion);
+            await _dbContext.SaveChangesAsync(cancelationToken);
+
+            _flasher.Success("Opinia została dodana");
+            return RedirectToAction("Distinct_AllBoughtBooksView");
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> OpinionsForBook(CancellationToken cancelationToken, long bookId)
+        {
+            return Json(
+
+                _dbContext.AllActive<Opinion>()
+                            .Where(row => row.OpiniedBook.Id == bookId)
+                            .Select(row =>
+                            new
+                            {
+                                User = row.CreateBy.UserName,
+                                Stars = row.Stars,
+                                CreateDate = row.CreateDate,
+                                Description = row.Description
+                            })
+                            .ToArray()
+            );
         }
 
     }

@@ -1,54 +1,72 @@
 ﻿@model CartModel
 
-<div style="width: 600px" class="mx-auto py-8">
-    <h1 class="text-amber-600 font-bold text-3xl mb-4">Zawartość koszyka</h1>
+<div class="flex justify-around mx-auto py-8">
 
-    @foreach (var cartItem in Model.CartItems)
-    {
-        var totalprice = @cartItem.Price * @cartItem.Quantity;
 
-        <div class="flex justify-around items-center" id="@String.Concat("container", cartItem.Id)">
-            <div class="flex gap-3 items-center">
-                <img src="~/@cartItem.Book.IconUrl" alt="" style="width:90px" />
-                <div>
-                    <p class="font-bold">@cartItem.Book.Name</p>
-                    <div class="flex gap-1">
-                        Cena:
-                        <p class="font-bold price">@cartItem.Price</p>
+    <div style="width: 600px">
+        <h1 class="text-amber-600 font-bold text-3xl mb-4">Zawartość koszyka</h1>
+
+        @foreach (var cartItem in Model.CartItems)
+        {
+            var totalprice = @cartItem.Price * @cartItem.Quantity;
+
+            <div class="flex justify-around items-center" id="@String.Concat("container", cartItem.Id)">
+                <div class="flex gap-3 items-center">
+                    <img src="~/@cartItem.Book.IconUrl" alt="" style="width:90px" />
+                    <div>
+                        <p class="font-bold">@cartItem.Book.Name</p>
+                        <div class="flex gap-1">
+                            Cena:
+                            <p class="font-bold price">@cartItem.Price</p>
+                        </div>
+
+                        <button class="text-red-600 font-semibold" onclick="DeleteItemFromCart(@cartItem.Book.Id, @cartItem.Id)">
+                            Usuń z koszyka
+                        </button>
+
+
                     </div>
-
-                    <button class="text-red-600 font-semibold" onclick="DeleteItemFromCart(@cartItem.Book.Id, @cartItem.Id)">
-                        Usuń z koszyka
-                    </button>
-
-
+                </div>
+                <div>
+                    <div class="flex gap-2 justify-start items-center">
+                        <button onclick="IncreaseQuantity(@cartItem.Book.Id, @cartItem.Id)">
+                            <i class="icon-plus p-2 text-white bg-amber-600"></i>
+                        </button>
+                        <span id="@cartItem.Id">
+                            @cartItem.Quantity
+                        </span>
+                        <button onclick="DecreaseQuantity(@cartItem.Book.Id, @cartItem.Id)">
+                            <i class="icon-minus p-2 text-white bg-amber-600"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="flex gap-1 items-center">
+                    Razem:
+                    <p class="font-bold text-xl"> <span class="total">@totalprice</span> zł</p>
                 </div>
             </div>
-            <div>
-                <div class="flex gap-2 justify-start items-center">
-                    <button onclick="IncreaseQuantity(@cartItem.Book.Id, @cartItem.Id)">
-                        <i class="icon-plus p-2 text-white bg-amber-600"></i>
-                    </button>
-                    <span id="@cartItem.Id">
-                        @cartItem.Quantity
-                    </span>
-                    <button onclick="DecreaseQuantity(@cartItem.Book.Id, @cartItem.Id)">
-                        <i class="icon-minus p-2 text-white bg-amber-600"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="flex gap-1 items-center">
-                Razem:
-                <p class="font-bold text-xl"> <span class="total">@totalprice</span> zł</p>
-            </div>
-        </div>
-        <hr class="my-3" />
-    }
+            <hr class="my-3" />
+        }
+
+    </div>
+    <div class="flex flex-col gap-3">
+        <h1 class="text-amber-600 font-bold text-3xl mb-4">Podsumowanie</h1>
+        <p class="flex gap-1 text-2xl">
+            <span>Łączna wartośc koszyka:</span>
+            <span id="total-amount">0</span>
+        </p>
+        <a asp-action="PayForCart">
+            <button class="bg-indigo-900 text-white py-2 px-3">
+                Zapłać
+            </button>
+        </a>
+    </div>
 </div>
-
 @section Scripts
     {
     <script>
+        RecalculateTotalPrice();
+
         let baseUlr = '@Url.Content("~")';
         function IncreaseQuantity(bookId, object) {
             $.ajax({
@@ -66,6 +84,7 @@
                     let singlePirce = $(container).find('.price').text().replace(',', '.');
                     let value = (parseFloat(singlePirce) * (currentValue + 1)).toFixed(2);
                     $(container).find('.total').text(value);
+                    RecalculateTotalPrice();
                 }
             });
         }
@@ -90,6 +109,7 @@
                     } else {
                         ToastError(result.error);
                     }
+                    RecalculateTotalPrice();
                 }
             });
         }
@@ -110,9 +130,19 @@
                     let currentValue = parseInt($(cartCounter).text());
                     $(cartCounter).text((currentValue - 1));
                     ToastSuccess("USunięto pomyślnie");
+                    RecalculateTotalPrice();
 
                 }
             });
+        }
+
+        function RecalculateTotalPrice() {
+            let totalAmount = 0;
+            $.each($("body").find('.total'), (index, element) => {
+                let curValue = parseFloat($(element).text());
+                totalAmount += curValue;
+            });
+            $("#total-amount").text(totalAmount + " zł");
         }
     </script>
 }
