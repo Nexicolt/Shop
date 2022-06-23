@@ -1,4 +1,4 @@
-﻿@model Data.Model.Page
+﻿@model Intranet.Models.Blog.BlogInsertModel
 
 @section CSS
     {
@@ -10,20 +10,33 @@
     </style>
 }
 
-    <form method="post" onsubmit="processEditor()">
+    <form method="post" onsubmit="processEditor()" enctype="multipart/form-data">
         <div class="flex flex-col gap-4 items-center justify-start w-full">
             <div class="w-full flex gap-2 items-center">
                 <p class="font-semibold uppercase">Tytuł:</p>
-                <input asp-for="Name" class="px-4 py-2 border w-full rounded-md" />
+                <input type="text" value="@Model.Name" name="name" class="px-4 py-2 border w-full rounded-md" />
+                <span asp-validation-for="Name" class="text-red-500 -mt-3"></span>
             </div>
-            <textarea id="editor" name="HTML">
-                @Html.Raw(@Model.HTML)
-                </textarea>
-            <input id="HTML" type="hidden" value="" />
-            <input id="id" name="id" type="hidden" value="@Model.Id" />
-            <div class="flex gap-8">
+            <div class="w-full flex gap-2 items-center">
+                <p class="font-semibold uppercase">Opis:</p>
+                <input type="text" value="@Model.Description" name="Description" class="px-4 py-2 border w-full rounded-md" />
+                <span asp-validation-for="Description" class="text-red-500 -mt-3"></span>
 
-                <input type="submit" value="Zatwierdź" class="py-2 px-4 border-2 border-green-600 hover:bg-green-600 hover:text-white uppercase font-semibold" />
+            </div>
+
+
+            <div class="w-full flex gap-2 items-center">
+                <p class="font-semibold uppercase w-32">Okładka:</p>
+                <input asp-for="Thumbnail" type="file" class="px-4 py-2 border w-full rounded-md" accept="image/x-png,image/gif,image/jpeg">
+            </div>
+            <span asp-validation-for="Thumbnail" class="text-red-500 -mt-3"></span>
+
+            <textarea id="editor" name="HTML">@Model.HTML</textarea>
+            <span asp-validation-for="HTML" class="text-red-500 -mt-3"></span>
+
+
+            <div class="flex gap-8">
+                <input type="submit" value="Dodaj" class="py-2 px-4 border-2 border-green-600 hover:bg-green-600 hover:text-white uppercase font-semibold" />
                 <a asp-action="Index">
                     <input type="button" class="py-2 px-4 border-2 border-red-500 hover:bg-red-500 hover:text-white uppercase font-semibold" value="Anuluj" />
                 </a>

@@ -1,4 +1,4 @@
-﻿@model Data.Model.Page
+﻿@model Intranet.Models.Blog.BlogEditModel
 
 @section CSS
     {
@@ -9,20 +9,35 @@
         }
     </style>
 }
+    <div class="mb-8">
+        <a asp-action="Index">
+            <button class="border-2 border-solid border-cyan-700 py-2 px-3 hover:bg-cyan-700">
+                Powrót do listy
+            </button>
+        </a>
+    </div>
 
     <form method="post" onsubmit="processEditor()">
         <div class="flex flex-col gap-4 items-center justify-start w-full">
             <div class="w-full flex gap-2 items-center">
                 <p class="font-semibold uppercase">Tytuł:</p>
                 <input asp-for="Name" class="px-4 py-2 border w-full rounded-md" />
+                <span asp-validation-for="Name" class="text-red-500 -mt-3"></span>
             </div>
-            <textarea id="editor" name="HTML">
-                @Html.Raw(@Model.HTML)
-                </textarea>
-            <input id="HTML" type="hidden" value="" />
-            <input id="id" name="id" type="hidden" value="@Model.Id" />
-            <div class="flex gap-8">
+            <div class="w-full flex gap-2 items-center">
+                <p class="font-semibold uppercase">Opis:</p>
+                <input asp-for="Description" class="px-4 py-2 border w-full rounded-md" />
+                <span asp-validation-for="Description" class="text-red-500 -mt-3"></span>
 
+            </div>
+            <div class="w-full flex gap-2 items-center">
+                <p class="font-semibold uppercase w-32">Czy widoczny:</p>
+                <input asp-for="IsActive " class="px-4 py-2 border  rounded-md" />
+            </div>
+            <textarea asp-for="HTML"></textarea>
+            <span asp-validation-for="HTML" class="text-red-500 -mt-3"></span>
+
+            <div class="flex gap-8">
                 <input type="submit" value="Zatwierdź" class="py-2 px-4 border-2 border-green-600 hover:bg-green-600 hover:text-white uppercase font-semibold" />
                 <a asp-action="Index">
                     <input type="button" class="py-2 px-4 border-2 border-red-500 hover:bg-red-500 hover:text-white uppercase font-semibold" value="Anuluj" />
@@ -36,7 +51,7 @@
     <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
     <script>
         tinymce.init({
-            selector: '#editor',
+            selector: '#HTML',
             plugins: [
                 'a11ychecker', 'advlist', 'advcode', 'advtable', 'autolink', 'checklist', 'export',
                 'lists', 'link', 'image', 'charmap', 'preview', 'anchor', 'searchreplace', 'visualblocks',

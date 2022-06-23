@@ -211,6 +211,8 @@ namespace Intranet.Controllers
             _flasher.Success("Opinia została usunięta", true);
             return RedirectToAction("Comments",new { bookId=bookId });
         }
+
+
     }
 }
 

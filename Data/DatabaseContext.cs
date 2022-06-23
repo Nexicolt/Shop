@@ -36,6 +36,9 @@ namespace Data
         public DbSet<Cart> Cart { get; set; }
         public DbSet<BoughtBooks> BoughtBooks { get; set; }
         public DbSet<Opinion> Opinion { get; set; }
+        public DbSet<Visit> Visit { get; set; }
+        public DbSet<Post> Post { get; set; }
+        public DbSet<Comment> Comment { get; set; }
 
 
         //VIEWS
@@ -64,6 +67,14 @@ namespace Data
                 .WithOne(row => row.OpiniedBook)
                 .OnDelete(DeleteBehavior.Restrict);
 
+
+            builder.Entity<Comment>()
+               .HasOne(row => row.Post)
+               .WithMany(row => row.Comments)
+                .OnDelete(DeleteBehavior.Restrict);
+
+
+
             //VIEWS
 
             builder.Entity<SoldBooksPerDay>()
@@ -76,8 +87,8 @@ namespace Data
 
             builder.Entity<SoldByCategory>()
             .HasNoKey()
-            .ToView("V_SalesPerCatrgory"); 
-            
+            .ToView("V_SalesPerCatrgory");
+
             builder.Entity<BestReaders>()
             .HasNoKey()
             .ToView("V_BestReaders");

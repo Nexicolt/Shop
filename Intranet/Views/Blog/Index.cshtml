@@ -1,0 +1,100 @@
+﻿@using Intranet.Models.Blog
+@{
+    ViewData["Title"] = "Strony";
+}
+
+@section CSS
+    {
+    <style>
+        .table-header {
+            border-right: 1px solid black;
+            border-bottom: 1px solid black;
+            text-align: center;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+            .table-header:last-child {
+                border-right: none;
+            }
+
+        .table-record {
+            border-right: 1px solid black;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .table-row:nth-child(2n) {
+            background: #dddddd;
+        }
+
+        .table-record:last-child {
+            border-right: none;
+        }
+
+        input[type=checkbox] {
+            -ms-transform: scale(1.5); /* IE */
+            -moz-transform: scale(1.5); /* FF */
+            -webkit-transform: scale(1.5); /* Safari and Chrome */
+            -o-transform: scale(1.5); /* Opera */
+            transform: scale(1.5);
+            padding: 5px;
+        }
+
+    </style>
+}
+
+    @model List<PostModel>
+
+    <div class="mb-8">
+        <section class="block mb-12">
+            <h1 class="text-3xl font-medium block mb-4">Posty</h1>
+            <div class="buttons flex gap-4">
+                <a asp-action="New">
+                    <button class="py-2 px-3 border-2 border-green-700 hover:bg-green-700 hover:text-white">Nowy post</button>
+                </a>
+            </div>
+        </section>
+
+        @foreach (var post in Model)
+    {
+        <div class="flex flex-col gap-2 items-center">
+            <div class="p-3 border border-solid border-black w-fit">
+                @post.Name
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <p> <i class="icon-eye"> (wszystkich)</i> @post.AllVisits</p>
+                <p><i class="icon-eye"> (w miesiącu)</i> @post.VisitsInCurrentMonth</p>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <p> <i class="icon-comment"></i> @post.CommentsCount</p>
+                <p><b>Widoczny:</b> @(post.IsLocked ? "Nie" : "Tak")</p>
+            </div>
+            <div class="flex gap-4 mt-4">
+                <a asp-action="Edit" asp-route-id="@post.Id">
+                    <button class="border-2 border-solid border-cyan-700 py-2 px-3 hover:bg-cyan-700">
+                        Edytuj post
+                    </button>
+                </a>
+
+                <a asp-action="Remove" asp-route-id="@post.Id">
+                    <button class="border-2 border-solid border-red-700 py-2 px-3 hover:bg-red-700">
+                        Usuń post
+                    </button>
+                </a>
+
+
+            </div>
+
+        </div>
+        <hr style="width:60%" class="mx-auto my-4" />
+    }
+
+
+
+</div>
+
+@section Scripts
+    {
+}

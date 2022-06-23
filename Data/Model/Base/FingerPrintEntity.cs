@@ -4,7 +4,7 @@ namespace Data.Model.Base
 {
     public class FingerPrintEntity : TimeStampEntity
     {
-        public User CreateBy { get; set; }
+        public virtual User CreateBy { get; set; }
 
         [ForeignKey("CreateBy")]
         public string CreateById { get; set; }
