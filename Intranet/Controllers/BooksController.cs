@@ -126,6 +126,7 @@ namespace Intranet.Controllers
                     var newBook = _mapper.Map<Book>(insertModel);
                     newBook.Category = await _dbContext.Category.FindAsync(new object[] {insertModel.CategoryId}, cancelationToken);
                     newBook.IconUrl = pathToFile;
+                    newBook.Available = true;
 
                     try
                     {

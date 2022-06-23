@@ -3,7 +3,7 @@ using Data.Model;
 using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<DatabaseContext>(options =>
+builder.Services.AddDbContextPool<DatabaseContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("BooksterDatabase")));
 
 builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)

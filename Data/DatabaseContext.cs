@@ -1,5 +1,6 @@
 ﻿using Data.Model;
 using Data.Model.Base;
+using Data.Views;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,12 +17,15 @@ namespace Data
             set;
         }
 
+        public DbContextOptions<DatabaseContext> Options { get; set; }
+
 
         private readonly DbContextOptions<DatabaseContext> _options;
         public DatabaseContext(DbContextOptions<DatabaseContext> options)
             : base(options)
         {
             _options = options;
+            Options = options;
         }
 
         public DbSet<User> User { get; set; }
@@ -32,6 +36,14 @@ namespace Data
         public DbSet<Cart> Cart { get; set; }
         public DbSet<BoughtBooks> BoughtBooks { get; set; }
         public DbSet<Opinion> Opinion { get; set; }
+
+
+        //VIEWS
+        public DbSet<SoldBooksPerDay> SoldBooksPerDay { get; set; }
+        public DbSet<BestSoldBooks> BestSoldBooks { get; set; }
+        public DbSet<SoldByCategory> SoldByCategory { get; set; }
+        public DbSet<BestReaders> BestReaders { get; set; }
+
 
         /// <summary>
         /// Zwraca wszystkie rekordy przekazanego typu, które są aktywne
@@ -52,6 +64,23 @@ namespace Data
                 .WithOne(row => row.OpiniedBook)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            //VIEWS
+
+            builder.Entity<SoldBooksPerDay>()
+              .HasNoKey()
+              .ToView("V_SalePerDay");
+
+            builder.Entity<BestSoldBooks>()
+            .HasNoKey()
+            .ToView("V_BestSoldBooks");
+
+            builder.Entity<SoldByCategory>()
+            .HasNoKey()
+            .ToView("V_SalesPerCatrgory"); 
+            
+            builder.Entity<BestReaders>()
+            .HasNoKey()
+            .ToView("V_BestReaders");
         }
 
         /// <summary>

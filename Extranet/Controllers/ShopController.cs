@@ -171,11 +171,11 @@ namespace Extranet.Controllers
                 };
 
                 var cartItemTmp = await _dbContext.CartItem.FirstOrDefaultAsync(row => row.Id == cartItem.Id, cancelationToken);
-                _dbContext.Remove(cartItemTmp);
+                cartItemTmp?.Delete();
                 _dbContext.Add(savedBought);
             }
             var userCartTmp = await _dbContext.Cart.FirstOrDefaultAsync(row => row.Id == userCart.Id, cancelationToken);
-            _dbContext.Remove(userCartTmp);
+            userCartTmp?.Delete();
 
             try
             {
