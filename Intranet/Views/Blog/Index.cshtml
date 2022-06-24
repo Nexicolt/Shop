@@ -50,7 +50,7 @@
         <section class="block mb-12">
             <h1 class="text-3xl font-medium block mb-4">Posty</h1>
             <div class="buttons flex gap-4">
-                <a asp-action="New">
+                <a asp-action="New" asp-controller="Blog">
                     <button class="py-2 px-3 border-2 border-green-700 hover:bg-green-700 hover:text-white">Nowy post</button>
                 </a>
             </div>
@@ -78,9 +78,15 @@
                     </button>
                 </a>
 
-                <a asp-action="Remove" asp-route-id="@post.Id">
+                <a asp-action="Remove"  asp-route-id="@post.Id">
                     <button class="border-2 border-solid border-red-700 py-2 px-3 hover:bg-red-700">
                         Usuń post
+                    </button>
+                </a>
+
+                 <a asp-action="Comments" asp-controller="Blog" asp-route-postId="@post.Id">
+                    <button class="border-2 border-solid border-green-700 py-2 px-3 hover:bg-green-700">
+                        Komentarze
                     </button>
                 </a>
 

@@ -13,4 +13,6 @@
 .icon-minus:before { content: '\e80b'; } /* '' */
 .icon-chart:before { content: '\e80c'; } /* '' */
 .icon-eye:before { content: '\e80d'; } /* '' */
+.icon-ok:before { content: '\e80e'; } /* '' */
+.icon-cancel:before { content: '\e80f'; } /* '' */
 .icon-comment:before { content: '\f4ac'; } /* '' */

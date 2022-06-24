@@ -31,17 +31,8 @@
 </head>
 <body class="">
     <div flashes></div>
-
-
-    <div class="flex" style="min-height: 100vh">
-
-
-        @if (!SignInManager.IsSignedIn(User))
-        {
-            @await Html.PartialAsync("_LeftMenuPartial")
-        }
-        <div class="w-full">
-            <header>
+            <div class="w-full">
+            <header class="absolute top-0 flex-column justify-end w-full">
                 @if (!SignInManager.IsSignedIn(User))
                 {
                     <nav class="flex justify-end">
@@ -59,10 +50,19 @@
                     </nav>
                 }
             </header>
-            <div class=" px-8" style="min-height: 650px;">
+           
+        </div>
+
+    <div class="flex" style="min-height: 100vh">
+
+
+        @if (!SignInManager.IsSignedIn(User))
+        {
+            @await Html.PartialAsync("_LeftMenuPartial")
+        }
+         <div class=" px-8 mt-20 w-full" style="min-height: 650px;">
                 @RenderBody()
             </div>
-        </div>
 
     </div>
 

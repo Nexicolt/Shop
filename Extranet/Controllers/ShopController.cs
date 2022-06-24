@@ -34,9 +34,16 @@ namespace Extranet.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("/books/{categoryId}")]
-        public async Task<IActionResult> BooksByCategory(CancellationToken cancelationToken, long? categoryId)
+        public async Task<IActionResult> BooksByCategory(CancellationToken cancelationToken, long? categoryId=null)
         {
-            var books = await _dbContext.AllActive<Book>().Include(row => row.Opinions).Where(row => row.Category.Id == categoryId).ToListAsync(cancelationToken);
+
+            List<Book> books = new List<Book>();
+            
+            if(categoryId.HasValue)
+                books = await _dbContext.AllActive<Book>().Include(row => row.Opinions).Where(row => row.Category.Id == categoryId).ToListAsync(cancelationToken);
+            else
+                books = await _dbContext.AllActive<Book>().Include(row => row.Opinions).ToListAsync(cancelationToken);
+
 
             foreach (var book in books)
             {

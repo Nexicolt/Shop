@@ -6,5 +6,7 @@ namespace Data.Model
     {
         public string Content { get; set; }
         public virtual Post? Post { get; set; }
+
+        public bool Aproved { get; set; }
     }
 }

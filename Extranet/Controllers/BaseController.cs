@@ -61,7 +61,7 @@ namespace Extranet.Controllers
 
             model.Pages = _dbContext.AllActive<Page>().ToDictionary(key => (key.Id ?? -1), value => value.Name);
             model.CartItemsCount = getCartCount();
-            return View(viewName, model);
+           return View(viewName, model);
         }
 
 

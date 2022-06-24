@@ -1,0 +1,94 @@
+﻿@using Data.Model
+@using Intranet.Models.Books
+@{
+    ViewData["Title"] = "Kategorie";
+}
+
+@section CSS
+    {
+    <style>
+        .table-header {
+            border-right: 1px solid black;
+            border-bottom: 1px solid black;
+            text-align: center;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .table-header:last-child {
+            border-right: none;
+        }
+        .table-record {
+            border-right: 1px solid black;
+            text-align: center;
+            padding: 10px 0;
+        }
+        .table-row:nth-child(2n) {
+            background: #dddddd;
+        }
+        .table-record:last-child {
+            border-right: none;
+        }
+        input[type=checkbox]
+        {
+            -ms-transform: scale(1.5); /* IE */
+            -moz-transform: scale(1.5); /* FF */
+            -webkit-transform: scale(1.5); /* Safari and Chrome */
+            -o-transform: scale(1.5); /* Opera */
+            transform: scale(1.5);
+            padding: 5px;
+        }
+
+    </style>
+}
+
+    @model List<Comment>
+
+    <div class="">
+        <!--<hr style="width: 80%" class="mx-auto mt-4" />-->
+        <section class="block">
+            <h1 class="text-3xl font-medium block mb-4">Komentarze</h1>
+            <div class="buttons flex gap-4">
+                <a asp-action="Index">
+                    <button class="py-2 px-3 border-2 border-indigo-700 hover:bg-indigo-700 hover:text-white">Powrót do listy</button>
+                </a>
+
+
+            </div>
+        </section>
+
+        <div class="mt-12" id="table">
+            <div class="grid grid-cols-5 items-end">
+                <div class="table-header">Autor</div>
+                <div class="table-header">Treść</div>
+                <div class="table-header">Status</div>
+                <div class="table-header">Data dodania</div>
+                <div class="table-header">Akcje</div>
+            </div>
+            @foreach (var opinion in Model)
+        {
+            <div class="grid grid-cols-5 table-row">
+                <div class="table-record">@Html.Raw(opinion.CreateBy.UserName)</div>
+                <div class="table-record">@Html.Raw(opinion.Content)</div>
+                <div class="table-record">@(opinion.IsLocked ? "Odrzucony" : opinion.Aproved ? "Zaakceptowany" : "Oczekuje")</div>
+                <div class="table-record">@Html.Raw(opinion.CreateDate)</div>
+                <div class="table-record text-white text-sm flex items-center gap-2 justify-center">
+                    @if (!opinion.IsLocked && !opinion.Aproved)
+                    {
+                        <a asp-action="AproveComment" asp-route-commentId="@opinion.Id">
+                            <i class="icon-ok p-2 bg-green-700 rounded-full"></i>
+                        </a>
+                        <a asp-action="RemoveComment" asp-route-commentId="@opinion.Id">
+                            <i class="icon-cancel p-2 bg-red-700 rounded-full"></i>
+                        </a>
+                    }
+
+                </div>
+            </div>
+        }
+    </div>
+
+</div>
+
+@section Scripts
+    {
+}

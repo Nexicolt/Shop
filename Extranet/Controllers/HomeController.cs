@@ -33,12 +33,20 @@ namespace Extranet.Controllers
                 return Error("Strona o podanym identyfikatorze nie istnieje");
             }
 
+            List<Post> latestPosts = new List<Post>();
+            if (siteId == 5)
+            {
+                latestPosts = await _dbContext.AllActive<Post>().Take(2).ToListAsync(cancellationToken);
+            }
+
             return BaseView("Index",
                 new MainModel
                 {
                     HTML = page.HTML,
+                    SiteId = siteId,
+                    LatestPosts = latestPosts
                 });
-        }
 
+        }
     }
 }

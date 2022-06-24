@@ -27,7 +27,7 @@ namespace Intranet.Controllers
             return View("Index", new BooksModel{ Books = books});
         }
 
-        [Route("/Edit")]
+        [Route("[controller]/[action]")]
         public async Task<IActionResult> Edit(CancellationToken cancelationToken, long id)
         {
             var entity = await _dbContext.Book.Include(x=>x.Category).FirstOrDefaultAsync(row=>row.Id == id, cancelationToken);
@@ -42,7 +42,7 @@ namespace Intranet.Controllers
             return View("Edit", model);
         }
 
-        [Route("/Edit")]
+        [Route("[controller]/[action]")]
         [HttpPost]
         public async Task<IActionResult> Edit(CancellationToken cancelationToken, BookEditModel editModel)
         {
@@ -100,7 +100,7 @@ namespace Intranet.Controllers
             return  new SelectList(categories, "Id", "Name", selectedValue);
         }
 
-        [Route("/New")]
+        [Route("[controller]/[action]")]
         public  IActionResult New()
         {
             var model = new BookInsertModel();
@@ -108,8 +108,8 @@ namespace Intranet.Controllers
             return View("New", model);
         }
 
+        [Route("[controller]/[action]")]
         [HttpPost]
-        [Route("/New")]
         public async Task<IActionResult> New(CancellationToken cancelationToken, BookInsertModel insertModel)
         {
             if (ModelState.IsValid)

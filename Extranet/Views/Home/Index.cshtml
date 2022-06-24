@@ -4,3 +4,7 @@
 }
 
 @Html.Raw(@Model.HTML)
+
+@if(Model.SiteId == 5){
+    @await Html.PartialAsync("_FromBlogPartial", Model)
+}
