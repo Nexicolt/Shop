@@ -156,7 +156,7 @@ namespace Intranet.Controllers
         public async Task<IActionResult> Remove(CancellationToken cancellationToken, long id)
         {
             //Bazowa funkcja do usuwania
-            var deleteResult = TryDelete<Category>(cancellationToken, id, out string? message);
+            var deleteResult = TryDelete<Book>(cancellationToken, id, out string? message);
             if (deleteResult)
             {
                 _flasher.Success("Kategoria została usunięta poprawnie", true);
