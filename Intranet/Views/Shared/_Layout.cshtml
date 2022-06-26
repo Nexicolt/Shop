@@ -33,7 +33,7 @@
     <div flashes></div>
             <div class="w-full">
             <header class="absolute top-0 flex-column justify-end w-full">
-                @if (!SignInManager.IsSignedIn(User))
+                @if (SignInManager.IsSignedIn(User))
                 {
                     <nav class="flex justify-end">
                         <ul class="flex flex-col justify-center items-center pr-8 py-3">
@@ -42,7 +42,7 @@
                                 @UserManager.GetUserName(User)
                             </li>
                             <li>
-                                <a href="" class="text-white">
+                                <a asp-action="Logout" asp-controller="Home" class="text-white">
                                     <button class="bg-amber-500 py-1 px-3 font-bold uppercase">Wyloguj</button>
                                 </a>
                             </li>
@@ -56,7 +56,7 @@
     <div class="flex" style="min-height: 100vh">
 
 
-        @if (!SignInManager.IsSignedIn(User))
+        @if (SignInManager.IsSignedIn(User))
         {
             @await Html.PartialAsync("_LeftMenuPartial")
         }

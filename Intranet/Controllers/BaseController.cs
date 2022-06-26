@@ -1,10 +1,14 @@
 ﻿using Data;
 using Data.Model.Base;
 using Intranet.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+using System.Security.Claims;
 
 namespace Intranet.Controllers
 {
+    [Authorize]
     public abstract class BaseController : Controller
     {
         protected readonly DatabaseContext _dbContext;
@@ -12,8 +16,14 @@ namespace Intranet.Controllers
         protected BaseController(DatabaseContext databaseContext)
         {
             _dbContext = databaseContext;
-            _dbContext.UserId = "34d4bf19-2c0b-4212-80aa-218c4fa0b307";
         }
+
+        public override void OnActionExecuting(ActionExecutingContext context)
+        {
+            _dbContext.UserId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            base.OnActionExecuting(context);
+        }
+
 
         [HttpGet]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

@@ -18,7 +18,10 @@ namespace Extranet.Controllers
         [Route("/blog/{id}")]
         public async Task<IActionResult> Index(CancellationToken cancellationToken, long id)
         {
-            var post = await _dbContext.Post.Include(row => row.Comments).FirstOrDefaultAsync(row => row.Id == id);
+            var post = await _dbContext.Post
+                .Include(row => row.Comments)
+                .ThenInclude(row => row.CreateBy)
+                .FirstOrDefaultAsync(row => row.Id == id);
             if(post == null)
             {
                 _flasher.Danger("Post o podanym identyfikatorze nie istnieje", true);

@@ -44,12 +44,13 @@ namespace Extranet.Controllers
             else
                 books = await _dbContext.AllActive<Book>().Include(row => row.Opinions).ToListAsync(cancelationToken);
 
+            
 
             foreach (var book in books)
             {
                 var cos = await _dbContext.AllActive<Opinion>().Where(row => row.OpiniedBook.Id == book.Id).ToListAsync(cancelationToken);
                 book.Stars = cos.Count == 0 ? 0 : (int)cos.Average(row => row.Stars);
-                book.OpinionsCount = book.Opinions.Count;
+                book.OpinionsCount = cos.Count();
             }
 
             var model = new BooksModel

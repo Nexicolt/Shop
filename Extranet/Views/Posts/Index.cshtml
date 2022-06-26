@@ -1,6 +1,8 @@
 ﻿@using Data.Model
+@using Microsoft.AspNetCore.Identity
 @model BlogModel
-
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
 
 <div style="width:800px" class="mx-auto my-8">
     <input asp-for="PostData.Name" class="modal-fullscreen-lg-down py-2 px-4 text-center  w-full text-2xl  font-bold uppecase" />
@@ -12,17 +14,21 @@
         <hr class="w-full my-4" />
         <h1 class="text-xl uppercase mb-4">Komentarze</h1>
 
-        <div class="flex flex-column items-end gap-3">
-            <textarea class="w-full no-resize py-2 px-4 border border-solid border-black" placeholder="Twój komentarz" id="comment"></textarea>
-            <button class="py-2 px-3 bg-cyan-700 text-white" onclick="PublishComment()">Publikuj</button>
-        </div>
+        @if (SignInManager.IsSignedIn(User))
+        {
 
+            <div class="flex flex-column items-end gap-3">
+                <textarea class="w-full no-resize py-2 px-4 border border-solid border-black" placeholder="Twój komentarz" id="comment"></textarea>
+                <button class="py-2 px-3 bg-cyan-700 text-white" onclick="PublishComment()">Publikuj</button>
+            </div>
+
+        }
         @foreach (var comment in Model.PostData.Comments)
         {
             <div class="flex flex-col gap-2 my-4">
                 <i class="icon-user text-xl fotn-bold">@comment.CreateBy.UserName</i>
-                <p class="font-light text-xs" >@comment.CreateDate</p>
-                <textarea  class="w-full no-resize py-2 px-4 bg-neutral-200" disabled>@comment.Content</textarea>
+                <p class="font-light text-xs">@comment.CreateDate</p>
+                <textarea class="w-full no-resize py-2 px-4 bg-neutral-200" disabled>@comment.Content</textarea>
             </div>
         }
     </div>
@@ -41,7 +47,7 @@
                 data: {
                     comment: comment,
                     postId: @Model.PostData.Id
-                        },
+                                },
                 success: function(result) {
                     ToastSuccess("Komentarz zostanie zweryfikowany i opublikowany");
                     $("#comment").val("");
